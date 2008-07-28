@@ -17,10 +17,20 @@ var Right = 39;
 var Down = 40;
 var Insert = 45;
 var Delete = 46;
+jQuery.fn.blink = function() {
+  this.toggle();
+  var that = this;
+  t = window.setTimeout(function() {
+    that.blink();
+}, 1000);
+  return this;
+};
 jQuery(function() {
   (function($this) {
     $this.bind("keypress", function(e) {
+      e.preventDefault();
       (function($this) {
+        $this.show();
         function insert(val) {
           $this.before(val);
 }
@@ -41,5 +51,8 @@ jQuery(function() {
 }
 })(jQuery("#cursor"));
 });
+    (function($this) {
+      $this.blink();
+})(jQuery("#cursor"));
 })(jQuery(window));
 });
