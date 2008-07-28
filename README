@@ -1,0 +1,20 @@
+Javascript Abstract Behavior Syntax? What's that?
+
+I was working on a project *very* similar to http://github.com/nex3/jabl in the months running up to RubyFringe.
+
+Then I saw Hampton's presenation. Oops.
+
+Well I had all this work and I wanted to see what it'd take to get it producing usable javascript.
+
+I pulled it out of http://github.com/collin/lucky7 and stuck it here.
+
+And hacked around a bit, removing some features, adding others.
+
+Check it out:
+
+(add github to rubygems)
+gem install collin-fold
+git://github.com/collin/jabs.git
+cd jabs
+
+Look through /examples

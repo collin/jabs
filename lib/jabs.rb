@@ -37,7 +37,7 @@ module Jabs
     end
 
     folds :Ready, /^:ready/ do
-      jquery(function(nil,  [], [:source_elements, render_children]))
+      jquery(function(nil,  [], [:source_elements, [call(function(nil, ["$this"], [:source_elements, render_children]), jquery([:name, "window"]))]]))
     end
 
     folds :Function, /^fun / do
@@ -106,7 +106,7 @@ module Jabs
     end
 
     def event_bind event, binds_to, function_sexp=nil
-      call(access(binds_to, [:name, "bind"]), [:string, event], function(nil,  [], function_sexp))
+      call(access(binds_to, [:name, "bind"]), [:string, event], function(nil,  ["e"], function_sexp))
     end
 
     def call *args
