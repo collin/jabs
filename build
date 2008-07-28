@@ -24,5 +24,6 @@ class JabsExampleBuilder < Lucky7::Builder
 
 end
 
+# JabsExampleBuilder.new.build_all
 JabsExampleBuilder.new.build_continuously
 
