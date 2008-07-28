@@ -1,0 +1,11 @@
+:ready
+  $input[default_value]
+    :blur
+      console.log(jQuery(this).val() === '')
+      if @value === ''
+        @value = @default_value
+
+    :focus
+      if @value === @default_value
+        @value = ''
+    blur! fun_name

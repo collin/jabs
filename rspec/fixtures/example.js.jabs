@@ -1,0 +1,24 @@
+fun checkFeed
+  $#feed
+    load("/live/last_item")
+  // Setup the timeout
+  setTimeout(checkFeed, 60000)
+
+:ready
+  checkFeed()
+
+$input[@default_value]
+  :focus
+    if @value == @default_value
+      this.removeClass("grey")
+      @value = "something"
+  :blur
+    if @value == ''
+      this.addClass("grey")
+      @value = @default_value
+  blur()
+
+$form
+  :submit
+    $input[@default_value]
+      focus()

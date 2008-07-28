@@ -1,0 +1,28 @@
+#! /usr/bin/ruby
+
+$LOAD_PATH << "/home/collin/code/lucky7/lib"
+Lucky7Root = ""
+require 'rubygems'
+require 'lucky7'
+require 'lib/jabs'
+require 'haml'
+
+__DIR__ = Pathname.new(__FILE__).dirname.expand_path
+
+class JabsExampleBuilder < Lucky7::Builder
+  SrcRegex       = /src/
+  BuildDirectory = ""
+
+  builds Haml, :files => "/home/collin/code/jabs/examples/src/*.html.haml"
+  builds Jabs, :files => "/home/collin/code/jabs/examples/src/*.js.jabs"
+
+  def build files=modified_files
+    super
+    require 'pp'
+    pp modified_files
+  end
+
+end
+
+JabsExampleBuilder.new.build_continuously
+

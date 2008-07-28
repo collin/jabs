@@ -22,28 +22,18 @@ module Jabs
     end
 
     folds :Selector, /^\$/ do
-      call(
-        access(jquery([:string, text]), [:name, "each"]), 
-        function(nil, [], [:source_elements, render_children])
-      )
-    end
-
-    def set_this
-      [[:var_statement, [[:assign_expr, [:name, "thi$"], jquery([:this])]]]]
+      call(function(nil, ["$this"], [:source_elements, render_children]), jquery([:string, text]))
     end
 
     folds :SubSelector, /^&/ do
       call(
-        access(
-          call(access([:name, "this"], [:name, "find"]), [:string, text]),
-          [:name, "each"]
-        ),
-        function(nil, [], [:source_elements, render_children])
+        function(nil, ["$this"], [:source_elements, render_children]),
+        call(access([:name, "$this"], [:name, "find"]), [:string, text])
       )
     end
 
     folds :Event, /^:/ do
-      event_bind(text, jquery([:name, "this"]), [:source_elements, render_children])
+      event_bind(text, [:name, "$this"], [:source_elements, render_children])
     end
 
     folds :Ready, /^:ready/ do
@@ -74,7 +64,38 @@ module Jabs
       ""
     end
 
+    def spot_replace expression
+
+# Implied .dot.accessors
+
+  # Floating free
+
+      expression.gsub! /- \.([\w]+)/ do; " $this.#{$1}" end
+
+  # Or the beginning of a line
+
+      expression.gsub! /^\.([\w]+)/ do; "$this.#{$1}" end
+
+# @ttribute setters
+
+      expression.gsub! /@([\w]+)[ ]*=[ ]*(.*)/ do |match|
+  # Catch comparisons
+        if $2[0] == ?=
+          match
+        else
+          "$this.attr('#{$1}', #{spot_replace $2})"
+        end
+      end
+
+# @ttribute accessors
+
+      expression.gsub! /@([\w]+)/ do; "$this.attr('#{$1}')" end
+
+      expression
+    end
+
     def parse expression
+      expression = spot_replace expression
       Johnson::Parser.parse(expression).value.first
     end
 
