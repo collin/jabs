@@ -33,7 +33,7 @@ module Jabs
     end
 
     folds :Event, /^:/ do
-      event_bind(text, [:name, "$this"], [:source_elements, render_children])
+      event_bind(text, [:name, "$this"], [:source_elements, [parse("var $this = jQuery(this)")] + render_children])
     end
 
     folds :Ready, /^:ready/ do

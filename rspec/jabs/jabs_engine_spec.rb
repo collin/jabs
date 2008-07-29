@@ -101,12 +101,16 @@ function real() {
       assert_jabs(":ready", "jQuery(function() {\n  (function($this) {  })(jQuery(window));\n});")
     end
 
+    it "has it's own $this" do
+      assert_jabs ":click", "$this = jquery(this);"
+    end
+
     it "binds events to 'this' and preserves namespace" do
-      assert_jabs ":click.awesomely", "$this.bind(\"click.awesomely\", function(e){});"
+      assert_jabs ":click.awesomely", "$this.bind(\"click.awesomely\", function(e){$this = jquery(this);});"
     end
 
     it "renders callback" do
-      assert_jabs ":click.awesomely\n  a()\n  b()", "$this.bind(\"click.awesomely\", function(e){a();b();});"
+      assert_jabs ":click.awesomely\n  a()\n  b()", "$this.bind(\"click.awesomely\", function(e){$this = jquery(this);a();b();});"
     end
 
     it "compiles nested with anything with arbitraty javascript inbetween" do
@@ -116,6 +120,7 @@ fun test
   :click
 },%{ 
 function test() {
+  $this = jquery(this);
   var cat = yum;
   $this.bind( 'click', function(e) {});
 }
@@ -132,6 +137,7 @@ $document
 (function($this) {
   cars++;
   $this.bind('click', function(e) {
+    $this = jquery(this);
     var cool = "beans"
   });
 })(jQuery("document"));
@@ -146,6 +152,7 @@ var cat = poo
 }, %{
 var cat = poo;
 $this.bind('click', function(e) {
+  $this = jquery(this);
   slot++;
 });
 }
