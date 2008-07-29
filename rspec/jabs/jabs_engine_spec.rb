@@ -14,7 +14,11 @@ describe Jabs::Engine do
     end
 
     it "renders multiple lines" do
-      assert_jabs "one;\ntwo;", "one;\ntwo"
+      assert_jabs "one;\ntwo;", "one;\ntwo;"
+    end
+
+    it "doesn't throw up when given nested lines" do
+      assert_jabs "var coolio = {\n  walks: 'to tho store'\n};", "var coolio = {\n  walks: 'to tho store'\n};"
     end
   end
 
@@ -94,15 +98,15 @@ function real() {
 
   describe "events" do
     it "has a special :ready event" do
-      assert_jabs(":ready", "jQuery(function() {});")
+      assert_jabs(":ready", "jQuery(function() {\n  (function($this) {  })(jQuery(window));\n});")
     end
 
     it "binds events to 'this' and preserves namespace" do
-      assert_jabs ":click.awesomely", "$this.bind(\"click.awesomely\", function(){});"
+      assert_jabs ":click.awesomely", "$this.bind(\"click.awesomely\", function(e){});"
     end
 
     it "renders callback" do
-      assert_jabs ":click.awesomely\n  a()\n  b()", "$this.bind(\"click.awesomely\", function(){a();b();});"
+      assert_jabs ":click.awesomely\n  a()\n  b()", "$this.bind(\"click.awesomely\", function(e){a();b();});"
     end
 
     it "compiles nested with anything with arbitraty javascript inbetween" do
@@ -113,7 +117,7 @@ fun test
 },%{ 
 function test() {
   var cat = yum;
-  $this.bind( 'click', function() {});
+  $this.bind( 'click', function(e) {});
 }
 }
     end
@@ -127,7 +131,7 @@ $document
 },%{
 (function($this) {
   cars++;
-  $this.bind('click', function() {
+  $this.bind('click', function(e) {
     var cool = "beans"
   });
 })(jQuery("document"));
@@ -141,7 +145,7 @@ var cat = poo
   slot++
 }, %{
 var cat = poo;
-$this.bind('click', function() {
+$this.bind('click', function(e) {
   slot++;
 });
 }
