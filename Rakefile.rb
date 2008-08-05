@@ -45,3 +45,7 @@ task :example do#=> "spec:all" do
   browser = Launchy::Browser.new
   browser.visit(target)
 end
+
+task :cleanup do 
+  Dir.glob("**/*.*~")+Dir.glob("**/*~").each{|swap|FileUtils.rm(swap, :force => true)}
+end

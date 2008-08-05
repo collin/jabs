@@ -4,7 +4,9 @@ require 'rspec/jabs_spec_helper'
 describe Jabs::Engine do
 #   before(:each) do
     def assert_jabs src, target
-      Jabs::Engine.new(src).render.should include(Johnson::Parser.parse(target).to_ecma)
+      src = Johnson::Parser.parse(Jabs::Engine.new(src).render).to_ecma
+      target = Johnson::Parser.parse(target).to_ecma
+      src.should include(target)
     end
 #   end
 
@@ -17,8 +19,16 @@ describe Jabs::Engine do
       assert_jabs "one;\ntwo;", "one;\ntwo;"
     end
 
+    it "whatever" do
+
+    end
+
     it "doesn't throw up when given nested lines" do
-      assert_jabs "var coolio = {\n  walks: 'to tho store'\n};", "var coolio = {\n  walks: 'to tho store'\n};"
+      assert_jabs %{var coolio = { val: \"to the store\"};}, %{ 
+var coolio = {
+  val: "to the store"
+};
+}
     end
   end
 
@@ -102,15 +112,15 @@ function real() {
     end
 
     it "has it's own $this" do
-      assert_jabs ":click", "$this = jquery(this);"
+      assert_jabs ":click", "var $this = jQuery(this);"
     end
 
     it "binds events to 'this' and preserves namespace" do
-      assert_jabs ":click.awesomely", "$this.bind(\"click.awesomely\", function(e){$this = jquery(this);});"
+      assert_jabs ":click.awesomely", "$this.bind(\"click.awesomely\", function(e){var $this = jQuery(this);});"
     end
 
     it "renders callback" do
-      assert_jabs ":click.awesomely\n  a()\n  b()", "$this.bind(\"click.awesomely\", function(e){$this = jquery(this);a();b();});"
+      assert_jabs ":click.awesomely\n  a()\n  b()", "$this.bind(\"click.awesomely\", function(e){var $this = jQuery(this);a();b();});"
     end
 
     it "compiles nested with anything with arbitraty javascript inbetween" do
@@ -120,9 +130,8 @@ fun test
   :click
 },%{ 
 function test() {
-  $this = jquery(this);
   var cat = yum;
-  $this.bind( 'click', function(e) {});
+  $this.bind( 'click', function(e) {var $this = jQuery(this);});
 }
 }
     end
@@ -137,7 +146,7 @@ $document
 (function($this) {
   cars++;
   $this.bind('click', function(e) {
-    $this = jquery(this);
+    var $this = jQuery(this);
     var cool = "beans"
   });
 })(jQuery("document"));
@@ -152,7 +161,7 @@ var cat = poo
 }, %{
 var cat = poo;
 $this.bind('click', function(e) {
-  $this = jquery(this);
+  var $this = jQuery(this);
   slot++;
 });
 }

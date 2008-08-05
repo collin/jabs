@@ -2,6 +2,31 @@ require 'haml'
 require 'fold'
 require 'johnson'
 
+module Johnson
+  module Nodes
+    attr_accessor :value
+    class FallThrough < Node
+      def initialize(_row, _column, value)
+        @value = value
+      end
+    end
+  end
+
+  module Visitors
+    class EcmaVisitor
+      def visit_FallThrough(o)
+        o.value
+      end
+    end
+
+    class SexpVisitor
+      def visit_FallThrough(o)
+        [:fall_through, o.value]
+      end
+    end
+  end
+end
+
 module Jabs
   include Johnson::Nodes
   
@@ -18,7 +43,7 @@ module Jabs
     end
 
     folds :Line, // do
-      parse text
+      [:fall_through, spot_replace(text)]
     end
 
     folds :Selector, /^\$/ do
