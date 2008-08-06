@@ -43,7 +43,7 @@ module Jabs
     end
 
     folds :Line, // do
-      [:fall_through, spot_replace(text)]
+      [:fall_through, (spot_replace(text) + children.map{|child| child.text}.join(""))]
     end
 
     folds :Selector, /^\$/ do

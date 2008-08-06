@@ -2,13 +2,11 @@ require 'rspec/jabs_spec_helper'
 # $LOAD_PATH << "~/code/johnson/js" unless $LOAD_PATH.include?("~/code/johnson/js")
 
 describe Jabs::Engine do
-#   before(:each) do
     def assert_jabs src, target
       src = Johnson::Parser.parse(Jabs::Engine.new(src).render).to_ecma
       target = Johnson::Parser.parse(target).to_ecma
       src.should include(target)
     end
-#   end
 
   describe "line" do
     it "passes through" do
@@ -19,16 +17,20 @@ describe Jabs::Engine do
       assert_jabs "one;\ntwo;", "one;\ntwo;"
     end
 
-    it "whatever" do
-
-    end
-
     it "doesn't throw up when given nested lines" do
       assert_jabs %{var coolio = { val: \"to the store\"};}, %{ 
 var coolio = {
   val: "to the store"
 };
 }
+    end
+
+    it "understands function literals across lines" do
+      assert_jabs %{
+function() {
+  doCall.apply(null);
+}
+}, %{function() {doCall.apply(null);}}
     end
   end
 
@@ -85,6 +87,10 @@ function real() {
   !stop == true;
 }  
 }
+    end
+
+    it "compiles empty functions across lines" do
+      assert_jabs %{function(){\r\n}}, %{function(){}}
     end
   end
 
