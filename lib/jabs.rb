@@ -72,6 +72,14 @@ module Jabs
       [:function, name, arg_names, [:source_elements, render_children]]
     end
 
+    folds :Def, /^def / do
+      parts = text.split(/ /)
+      name, arg_names = parts.shift, parts.join('').gsub(' ', '').split(',')
+      [:assign_expr, 
+        access(access([:name, "jQuery"], [:name, "fn"]), [:name, name]),
+        [:function, nil, arg_names, [:source_elements, [parse("var $this = this")] + render_children]]]
+    end
+
     folds :If, /^if / do
       _if = johnsonize [:if, parse(text),[:source_elements, render_children], nil]
       @waiting_else = _if
