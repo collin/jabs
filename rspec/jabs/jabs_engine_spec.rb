@@ -2,11 +2,11 @@ require 'rspec/jabs_spec_helper'
 # $LOAD_PATH << "~/code/johnson/js" unless $LOAD_PATH.include?("~/code/johnson/js")
 
 describe Jabs::Engine do
-    def assert_jabs src, target
-      src = Johnson::Parser.parse(Jabs::Engine.new(src).render).to_ecma
-      target = Johnson::Parser.parse(target).to_ecma
-      src.should include(target)
-    end
+  def assert_jabs src, target
+    src = Johnson::Parser.parse(Jabs::Engine.new(src).render).to_ecma
+    target = Johnson::Parser.parse(target).to_ecma
+    src.should include(target)
+  end
 
   describe "line" do
     it "passes through" do
@@ -91,6 +91,44 @@ function real() {
 
     it "compiles empty functions across lines" do
       assert_jabs %{function(){\r\n}}, %{function(){}}
+    end
+  end
+
+  describe "def" do
+    it "adds functions to JQuery.fn" do
+      assert_jabs "def whatever", "jQuery.fn.whatever = function() {var $this = this;}"
+    end
+
+    it "adds functions with arguments to jQuery.fn" do
+      assert_jabs "def whatever you, want", "jQuery.fn.whatever = function(you, want) {var $this = this;}"
+    end
+
+    it "compiles jabs normally within def" do
+      assert_jabs %{
+def sets_default_value
+  &[default_value]
+    :focus
+      if @value == @default_value
+        @value = ''
+
+    :blur
+      if @value == ''
+        @value = @default_value
+}, %{
+jQuery.fn.sets_default_value = function() {
+  $this = this;
+  (function($this) {
+    $this.focus(function() {
+      if($this.attr('value') == $this.attr('default_value'))
+        this.attr('value', '')
+    });
+    $this.blur(function() {
+      if($this.attr('value') == $this.attr('default_value'))
+        this.attr('value', '')
+    });
+  })($this.find('[default_value]'))
+}
+}
     end
   end
 
@@ -249,6 +287,40 @@ if(3 === 4) {
 #     it "compiles else unless branches" do
 #       assert_jabs "else unless 3 == 4", "else if(!(3 == 4)) {}"
 #     end
+  end
+
+  describe "../.. access" do
+    it "access prevObject" do
+      assert_jabs "..", "echo($this.prevObject)"
+    end
+
+    it "accesses multiple previous objects" do
+      assert_jabs "../..", "$this.prevObject.prevObject"
+    end
+
+    it "provides access to attributes of previous objects" do 
+      assert_jabs "..@value", "$this.prevObject.attr('value')"
+    end
+
+    it "sets attributes of previous objects" do
+      assert_jabs "../..@value = 'neat'", "$this.prevObject.prevObject.attr('value', 'neat')"
+    end
+
+    it "works inline with current object access and attribute setting" do
+      assert_jabs "..@value = @value", "$this.prevObject.attr('value', $this.attr('value'))"
+    end
+
+    it "works inline with current object access and attribute setting reveres" do
+      assert_jabs "@value = ..@value", "$this.attr('value', $this.prevObject.attr('value'))"
+    end
+
+    it "allows method calls" do
+      assert_jabs "..hide()", "$this.prevObject.hide()"
+    end
+
+    it "works within conditionals" do
+      assert_jabs "if ..is('.awesome')", "if($this.prevObject.is('.awesome')) {}"
+    end
   end
 
   describe "dot.access" do
