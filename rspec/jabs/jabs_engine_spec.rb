@@ -107,26 +107,10 @@ function real() {
       assert_jabs %{
 def sets_default_value
   &[default_value]
-    :focus
-      if @value == @default_value
-        @value = ''
-
-    :blur
-      if @value == ''
-        @value = @default_value
 }, %{
 jQuery.fn.sets_default_value = function() {
-  $this = this;
-  (function($this) {
-    $this.focus(function() {
-      if($this.attr('value') == $this.attr('default_value'))
-        this.attr('value', '')
-    });
-    $this.blur(function() {
-      if($this.attr('value') == $this.attr('default_value'))
-        this.attr('value', '')
-    });
-  })($this.find('[default_value]'))
+  var $this = this;
+  (function($this) {})($this.find('[default_value]'))
 }
 }
     end
