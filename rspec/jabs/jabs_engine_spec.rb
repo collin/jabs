@@ -1,9 +1,11 @@
 require 'rspec/jabs_spec_helper'
+require 'colored'
 # $LOAD_PATH << "~/code/johnson/js" unless $LOAD_PATH.include?("~/code/johnson/js")
 
 describe Jabs::Engine do
   def assert_jabs src, target
-    src = Johnson::Parser.parse(Jabs::Engine.new(src).render).to_ecma
+     jabsed = Jabs::Engine.new(src).render
+    src = Johnson::Parser.parse(jabsed).to_ecma
     target = Johnson::Parser.parse(target).to_ecma
     src.should include(target)
   end
@@ -252,30 +254,37 @@ if(3 === 4) {
 }
     end
 
-#     it "compiles else branches" do
-#       assert_jabs %{
-# if 3 == 4
-#   onething;
-# else
-#   something;
-# }, %{
-# if(3 == 4) {onething;}
-# else {something;}
-# }
-#     end
-# 
-#     it "compiles else if branches" do
-#       assert_jabs "else if 3 == 4", "else if(3 == 4) {}"
-#     end
-# 
-#     it "compiles else unless branches" do
-#       assert_jabs "else unless 3 == 4", "else if(!(3 == 4)) {}"
-#     end
+     it "compiles else branches" do
+       assert_jabs %{
+if 3 == 4
+  onething
+else
+  something
+}, %{
+if(3 == 4) {onething;}
+else {something;}
+}
+     end
+ 
+     it "compiles else if branches" do
+       assert_jabs %{      
+if 1 == 2
+  yay
+else if 3 == 4
+  poo
+else
+  wtf
+}, "if(1 == 2) {yay;} else if(3 == 4) {poo;} else {wtf;}"
+     end
+ 
+     it "compiles else unless branches" do
+       assert_jabs "else unless 3 == 4", "else if(!(3 == 4)) {}"
+     end
   end
 
   describe "../.. access" do
     it "access prevObject" do
-      assert_jabs "..", "echo($this.prevObject)"
+      assert_jabs "..", "$this.prevObject"
     end
 
     it "accesses multiple previous objects" do
@@ -299,17 +308,26 @@ if(3 === 4) {
     end
 
     it "allows method calls" do
-      assert_jabs "..hide()", "$this.prevObject.hide()"
+      assert_jabs "...hide()", "$this.prevObject.hide()"
     end
 
     it "works within conditionals" do
-      assert_jabs "if ..is('.awesome')", "if($this.prevObject.is('.awesome')) {}"
+      assert_jabs "if ...is('.awesome')", "if($this.prevObject.is('.awesome')) {}"
     end
   end
 
   describe "dot.access" do
     it "cheats to $this.whatever" do
       assert_jabs ".width()", "$this.width()"
+    end
+    
+    it "renders children appropriately" do
+      assert_jabs %{
+.css({
+  a: 1
+  ,b: 2
+})
+      }, "$this.css({a:1, b:2})"
     end
   end
 

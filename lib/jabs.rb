@@ -15,6 +15,26 @@ module Johnson
 
   module Visitors
     class EcmaVisitor
+      def visit_SourceElements(o)
+        newline = o.value.length > 0 ? "\n" : ' '
+        (@depth == 0 ? '' : "{#{newline}") +
+          indent {
+            o.value.map { |x|
+              code = x.accept(self)
+              semi = case x
+                     when Nodes::FallThrough
+                      ""
+                     when Nodes::Function, Nodes::While, Nodes::If, Nodes::Try, Nodes::Switch, Nodes::Case, Nodes::Default, Nodes::For, Nodes::ForIn
+                       code =~ /\}\Z/ ? '' : ';'
+                     else
+                       ';'
+                     end
+              "#{indent}#{code}#{semi}"
+            }.join("\n")
+          } +
+          (@depth == 0 ? '' : "#{newline}}")
+      end
+
       def visit_FallThrough(o)
         o.value
       end
@@ -37,7 +57,6 @@ module Jabs
     def initialize
       super
       
-      @waiting_else = []
       @ready = false
       @current_sexp = []
       @full_sexp = [:source_elements, @current_sexp]
@@ -80,22 +99,32 @@ module Jabs
         [:function, nil, arg_names, [:source_elements, [parse("var $this = this")] + render_children]]]
     end
 
+    if_meta = %q{
+      index = parent.children.index(self)
+      _next =  parent.children.slice index + 1
+      
+      _else = if [Else, ElseIf].include? _next.class
+        _next.render
+      else
+        nil
+      end
+      [:if, parse(text),[:source_elements, render_children], _else]
+    }
+
     folds :If, /^if / do
-      _if = johnsonize [:if, parse(text),[:source_elements, render_children], nil]
-      @waiting_else = _if
-      _if
+      eval if_meta
     end
 
     folds :Unless, /^unless / do
-      _unless = johnsonize [:if, [:not, [:parenthesis, parse(text)]], [:source_elements, render_children], nil]
-      @waiting_else = _unless
-      _unless
+      [:if, [:not, [:parenthesis, parse(text)]], [:source_elements, render_children], nil]
     end
 
     folds :Else, /^else/ do
-      @waiting_else.shift
-      @waiting_else << [:source_elements, render_children]
-      ""
+      [:source_elements, render_children]
+    end
+
+    folds :ElseIf, /^else if/ do
+      eval if_meta
     end
 
     def spot_replace expression
@@ -124,6 +153,16 @@ module Jabs
 # @ttribute accessors
 
       expression.gsub! /@([\w]+)/ do; "$this.attr('#{$1}')" end
+
+# ../.. access
+
+      
+      expression.gsub! /\/\.\./ do; ".prevObject" end
+      expression.gsub! /\.\./ do; "$this.prevObject" end
+
+# dangling $this
+ 
+      expression.gsub! /prevObject\$this/ do; "prevObject" end
 
       expression
     end
