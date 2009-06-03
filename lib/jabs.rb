@@ -1,5 +1,4 @@
 require 'rubygems'
-require 'haml'
 require 'fold'
 require 'johnson'
 
@@ -52,6 +51,16 @@ module Jabs
   include Johnson::Nodes
   
   class Precompiler < Fold::Precompiler
+    class << self
+      attr_accessor :spot_replacements
+    end
+
+    self.spot_replacements = []
+
+    def self.spot_replace key, &block
+      spot_replacements << block if block_given?
+    end
+
     attr_reader :sexp, :current_sexp
 
     def initialize
@@ -63,7 +72,7 @@ module Jabs
     end
 
     folds :Line, // do
-      [:fall_through, (spot_replace(text) + children.map{|child| child.text}.join(""))]
+      [:fall_through, (Precompiler.do_spot_replace(text) + children.map{|child| child.text}.join(""))]
     end
 
     folds :Selector, /^\$/ do
@@ -127,48 +136,67 @@ module Jabs
       eval if_meta
     end
 
-    def spot_replace expression
-
-# Implied .dot.accessors
-
-  # Floating free
-
-      expression.gsub! /- \.([\w]+)/ do; " $this.#{$1}" end
-
-  # Or the beginning of a line
-
-      expression.gsub! /^\.([\w]+)/ do; "$this.#{$1}" end
-
-# @ttribute setters
-
-      expression.gsub! /@([\w]+)[ ]*=[ ]*(.*)/ do |match|
-  # Catch comparisons
+    spot_replace :DotAcessor do |expression|
+      expression.gsub /(^\.([\w]+)|- \.(.+))(.*)/ do |match|
+        "$this#{Precompiler.compile_arguments expression, $1, match, $4}"
+      end
+    end
+    
+    spot_replace :AttributeSetter do |expression|
+      expression.gsub /@([\w]+)[ ]*=[ ]*(.*)/ do |match|
         if $2[0] == ?=
           match
         else
-          "$this.attr('#{$1}', #{spot_replace $2})"
+          "$this.attr('#{$1}', #{Precompiler.do_spot_replace $2})"
         end
       end
+    end
+    
+    spot_replace :AttributeAcssor do |expression|
+      expression.gsub /@([\w]+)/ do
+        "$this.attr('#{$1}')"
+      end
+    end
 
-# @ttribute accessors
+    spot_replace :AccessUpUp do |expression|
+      expression.gsub /\/\.\./ do
+        ".prevObject" 
+      end
+    end
+    
+    spot_replace :AccessUp do |expression|
+      expression.gsub /\.\./ do
+        "$this.prevObject" 
+      end
+    end
 
-      expression.gsub! /@([\w]+)/ do; "$this.attr('#{$1}')" end
+    spot_replace :DanglingThis do |expression|
+      expression.gsub /prevObject\$this/ do
+        "prevObject"
+      end
+    end
 
-# ../.. access
-
-      
-      expression.gsub! /\/\.\./ do; ".prevObject" end
-      expression.gsub! /\.\./ do; "$this.prevObject" end
-
-# dangling $this
- 
-      expression.gsub! /prevObject\$this/ do; "prevObject" end
-
+    def self.do_spot_replace expression
+      spot_replacements.each do |block|
+        expression = block.call(expression)
+      end
       expression
     end
 
+    def self.compile_arguments expression, call, real, args
+      return real if expression[Regexp.new("^\\#{call}\\(")]
+      arguments = [] 
+      args.split(/\s|,/).each do |arg|
+        arg.gsub!(/:(\w+)/) {%{"#{$1}"}}
+        next if arg[/\s/]
+        next if arg == ""
+        arguments << arg
+      end
+      "#{call}(#{arguments.join(', ')})"
+    end
+
     def parse expression
-      expression = spot_replace expression
+      self.class.do_spot_replace expression
       Johnson::Parser.parse(expression).value.first
     end
 
@@ -179,7 +207,7 @@ module Jabs
     end
 
     def event_bind event, binds_to, function_sexp=nil
-      call(access(binds_to, [:name, "bind"]), [:string, event], function(nil,  ["e"], function_sexp))
+      call(access(binds_to, [:name, "live"]), [:string, event], function(nil,  ["e"], function_sexp))
     end
 
     def call *args

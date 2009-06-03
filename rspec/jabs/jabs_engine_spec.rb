@@ -4,10 +4,17 @@ require 'colored'
 
 describe Jabs::Engine do
   def assert_jabs src, target
-     jabsed = Jabs::Engine.new(src).render
+    jabsed = Jabs::Engine.new(src).render
     src = Johnson::Parser.parse(jabsed).to_ecma
     target = Johnson::Parser.parse(target).to_ecma
     src.should include(target)
+  rescue Exception => e
+    puts "\n"*2
+    puts description
+    puts Jabs::Engine.new(src).render
+    puts src
+    puts target
+    raise e
   end
 
   describe "line" do
@@ -146,11 +153,11 @@ jQuery.fn.sets_default_value = function() {
     end
 
     it "binds events to 'this' and preserves namespace" do
-      assert_jabs ":click.awesomely", "$this.bind(\"click.awesomely\", function(e){var $this = jQuery(this);});"
+      assert_jabs ":click.awesomely", "$this.live(\"click.awesomely\", function(e){var $this = jQuery(this);});"
     end
 
     it "renders callback" do
-      assert_jabs ":click.awesomely\n  a()\n  b()", "$this.bind(\"click.awesomely\", function(e){var $this = jQuery(this);a();b();});"
+      assert_jabs ":click.awesomely\n  a()\n  b()", "$this.live(\"click.awesomely\", function(e){var $this = jQuery(this);a();b();});"
     end
 
     it "compiles nested with anything with arbitraty javascript inbetween" do
@@ -161,7 +168,7 @@ fun test
 },%{ 
 function test() {
   var cat = yum;
-  $this.bind( 'click', function(e) {var $this = jQuery(this);});
+  $this.live( 'click', function(e) {var $this = jQuery(this);});
 }
 }
     end
@@ -175,7 +182,7 @@ $document
 },%{
 (function($this) {
   cars++;
-  $this.bind('click', function(e) {
+  $this.live('click', function(e) {
     var $this = jQuery(this);
     var cool = "beans"
   });
@@ -190,7 +197,7 @@ var cat = poo
   slot++
 }, %{
 var cat = poo;
-$this.bind('click', function(e) {
+$this.live('click', function(e) {
   var $this = jQuery(this);
   slot++;
 });
@@ -296,7 +303,7 @@ else
     end
 
     it "sets attributes of previous objects" do
-      assert_jabs "../..@value = 'neat'", "$this.prevObject.prevObject.attr('value', 'neat')"
+      assert_jabs "../..@value = 'neat'", %{$this.prevObject.prevObject.attr('value', 'neat')}
     end
 
     it "works inline with current object access and attribute setting" do
@@ -316,9 +323,23 @@ else
     end
   end
 
+  describe "argument compilation" do
+    it "compiles symbols to strings" do
+      assert_jabs ".addClass :class_name", %{$this.addClass("class_name")}
+    end
+
+    it "doesn't render multiple commas" do
+      assert_jabs ".methodCall 1, 2", %{$this.methodCall(1, 2)}
+    end  
+  end
+
   describe "dot.access" do
     it "cheats to $this.whatever" do
       assert_jabs ".width()", "$this.width()"
+    end
+    
+    it "does not require parenthesis" do
+      assert_jabs ".width", "$this.width()"
     end
     
     it "renders children appropriately" do
@@ -377,12 +398,12 @@ else
 # jQuery(function() {
 #   (function() {
 #     var _default = this.attr('default_value');
-#     this.bind("blur", function() {
+#     this.live("blur", function() {
 #       if(this.val() === '') {
 #         this.val(_default);
 #       }
 #     });
-#     this.bind("focus", function() {
+#     this.live("focus", function() {
 #       if(this.val() === _default) {
 #         this.val('');
 #       }

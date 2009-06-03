@@ -1,0 +1,33 @@
+get 'http://github.com/githubapi'+window.location.href.match(/~(.*)/)[1]
+  user.repositories.each fun repository
+    $#repositories
+      .append render(:repository, repository)
+      
+def show_messages
+  &.winner
+    .removeClass :winner
+  $.repository:not(.faded)
+    &:unique?
+      .addClass :winner
+      $#winners_circle
+        .show
+        .replaceWith render(:winners_circle, ../@repository)
+    &:not_unique?
+      $#winners_circle
+        .hide
+$.repo
+  &a:click
+    event.stopPropagation()
+  :click
+    .toggleClass :faded
+    .show_messages
+ 
+$[href=#show]
+  $.repository
+    .removeClass :faded
+  +show_messages
+      
+$[href=#hide]
+  $.repository
+    .addClass :faded
+  .show_messages
