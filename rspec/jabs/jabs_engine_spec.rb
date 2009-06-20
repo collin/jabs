@@ -333,6 +333,48 @@ else
     end  
   end
 
+  describe "nested function calls" do
+    it "assumes previous line returns jquery object" do
+      assert_jabs %{
+.methodA :val
+  .methodB :name
+      },
+      %{
+(function($this){
+  $this.methodB('name')
+})($this.methodA('val'))
+      }
+    end
+  end
+
+  describe "ajax" do
+    describe "get" do
+      it "makes a basic ajax call" do
+        assert_jabs "get", "jQuery.ajax()"
+      end
+      
+      it "uses a url passed to it" do
+        assert_jabs 'get "http://google.com"', '
+          jQuery.ajax({
+            url: "http://google.com"
+          })
+        '
+      end
+    end
+    
+    describe "post" do
+      it "makes post requests"
+    end
+    
+    describe "put" do
+      it "makes put requests"
+    end
+    
+    describe "delete" do
+      it "makes delete requests"
+    end
+  end
+
   describe "dot.access" do
     it "cheats to $this.whatever" do
       assert_jabs ".width()", "$this.width()"

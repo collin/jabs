@@ -72,7 +72,7 @@ module Jabs
     end
 
     folds :Line, // do
-      [:fall_through, (Precompiler.do_spot_replace(text) + children.map{|child| child.text}.join(""))]
+      [:fall_through, (Precompiler.do_spot_replace(text, self) + children.map{|child| child.text}.join(""))]
     end
 
     folds :Selector, /^\$/ do
@@ -136,49 +136,67 @@ module Jabs
       eval if_meta
     end
 
-    spot_replace :DotAcessor do |expression|
+    folds :DotAccessor, /^\./ do
+      index = parent.children.index(self)
+      _next =  parent.children.slice index + 1
+      _text = _next ? _next.text : ""
+      if children.any?
+        if (_text[/\}\)/])
+          [:fall_through, ("$this."+Precompiler.do_spot_replace(text, self) + children.map{|child| child.text}.join(""))]
+        else
+          call(
+            function(nil, ["$this"], [:source_elements, render_children]),
+            parse(Precompiler.do_spot_replace(".#{text}", self))
+          )
+        end
+      else
+        parse Precompiler.do_spot_replace(".#{text}", self)
+      end
+    end
+
+    spot_replace :DotAccessor do |expression, precompiler|
       expression.gsub /(^\.([\w]+)|- \.(.+))(.*)/ do |match|
         "$this#{Precompiler.compile_arguments expression, $1, match, $4}"
       end
     end
     
-    spot_replace :AttributeSetter do |expression|
+    spot_replace :AttributeSetter do |expression, precompiler|
       expression.gsub /@([\w]+)[ ]*=[ ]*(.*)/ do |match|
         if $2[0] == ?=
           match
         else
-          "$this.attr('#{$1}', #{Precompiler.do_spot_replace $2})"
+          "$this.attr('#{$1}', #{Precompiler.do_spot_replace $2, precompiler})"
         end
       end
     end
     
-    spot_replace :AttributeAcssor do |expression|
+    spot_replace :AttributeAccessor do |expression, precompiler|
       expression.gsub /@([\w]+)/ do
         "$this.attr('#{$1}')"
       end
     end
 
-    spot_replace :AccessUpUp do |expression|
+    spot_replace :AccessUpUp do |expression, precompiler|
       expression.gsub /\/\.\./ do
         ".prevObject" 
       end
     end
     
-    spot_replace :AccessUp do |expression|
+    spot_replace :AccessUp do |expression, precompiler|
       expression.gsub /\.\./ do
         "$this.prevObject" 
       end
     end
 
-    spot_replace :DanglingThis do |expression|
+    spot_replace :DanglingThis do |expression, precompiler|
       expression.gsub /prevObject\$this/ do
         "prevObject"
       end
     end
 
-    def self.do_spot_replace expression
+    def self.do_spot_replace expression, precompiler
       spot_replacements.each do |block|
-        expression = block.call(expression)
+        expression = block.call(expression, precompiler)
       end
       expression
     end
@@ -196,7 +214,7 @@ module Jabs
     end
 
     def parse expression
-      self.class.do_spot_replace expression
+      self.class.do_spot_replace expression, self
       Johnson::Parser.parse(expression).value.first
     end
 
