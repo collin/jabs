@@ -152,9 +152,6 @@ module Jabs
           )
         end
       else
-      puts text
-      puts text
-      puts text
         parse Precompiler.do_spot_replace(".#{text}", self)
       end
     end
