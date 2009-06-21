@@ -1,3 +1,5 @@
+#! /usr/bin/env ruby
+
 require 'rubygems'
 require 'fold'
 require 'johnson'
@@ -150,6 +152,9 @@ module Jabs
           )
         end
       else
+      puts text
+      puts text
+      puts text
         parse Precompiler.do_spot_replace(".#{text}", self)
       end
     end
@@ -194,7 +199,7 @@ module Jabs
       end
     end
 
-    def self.do_spot_replace expression, precompiler
+    def self.do_spot_replace expression, precompiler=nil
       spot_replacements.each do |block|
         expression = block.call(expression, precompiler)
       end
@@ -203,14 +208,19 @@ module Jabs
 
     def self.compile_arguments expression, call, real, args
       return real if expression[Regexp.new("^\\#{call}\\(")]
-      arguments = [] 
-      args.split(/\s|,/).each do |arg|
-        arg.gsub!(/:(\w+)/) {%{"#{$1}"}}
-        next if arg[/\s/]
-        next if arg == ""
-        arguments << arg
+      arguments = []
+      puts args[/^\./]
+      if args[/^\./]
+        "#{call}()#{do_spot_replace(args).gsub("$this", "")}"
+      else
+        args.split(/\s|,/).each do |arg|
+          arg.gsub!(/:(\w+)/) {%{"#{$1}"}}
+          next if arg[/\s/]
+          next if arg == ""
+          arguments << arg
+        end
+        "#{call}(#{arguments.join(', ')})"
       end
-      "#{call}(#{arguments.join(', ')})"
     end
 
     def parse expression

@@ -11,7 +11,7 @@ describe Jabs::Engine do
   rescue Exception => e
     puts "\n"*2
     puts description
-    puts Jabs::Engine.new(src).render
+#    puts Jabs::Engine.new(src).render
     puts src
     puts target
     raise e
@@ -378,6 +378,10 @@ else
   describe "dot.access" do
     it "cheats to $this.whatever" do
       assert_jabs ".width()", "$this.width()"
+    end
+    
+    it "allows method chaining" do
+      assert_jabs ".siblings.get(0)", "$this.siblings().get(0)"
     end
     
     it "does not require parenthesis" do
