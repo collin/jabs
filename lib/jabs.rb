@@ -119,7 +119,7 @@ module Jabs
       else
         nil
       end
-      [:if, parse(text),[:source_elements, render_children], _else]
+      [:if, parse(Precompiler.do_spot_replace(text)),[:source_elements, render_children], _else]
     }
 
     folds :If, /^if / do
@@ -127,7 +127,7 @@ module Jabs
     end
 
     folds :Unless, /^unless / do
-      [:if, [:not, [:parenthesis, parse(text)]], [:source_elements, render_children], nil]
+      [:if, [:not, [:parenthesis, parse(Precompiler.do_spot_replace(text))]], [:source_elements, render_children], nil]
     end
 
     folds :Else, /^else/ do

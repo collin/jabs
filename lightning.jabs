@@ -7,12 +7,12 @@ def show_messages
   &.winner
     .removeClass :winner
   $.repository:not(.faded)
-    &:unique?
+    if .siblings.get(0)
       .addClass :winner
       $#winners_circle
         .show
         .replaceWith render(:winners_circle, ../@repository)
-    &:not_unique?
+    else
       $#winners_circle
         .hide
 $.repo
@@ -25,7 +25,7 @@ $.repo
 $[href=#show]
   $.repository
     .removeClass :faded
-  +show_messages
+  .show_messages
       
 $[href=#hide]
   $.repository
