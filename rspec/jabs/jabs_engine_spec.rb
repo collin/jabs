@@ -11,7 +11,7 @@ describe Jabs::Engine do
   rescue Exception => e
     puts "\n"*2
     puts description
-#    puts Jabs::Engine.new(src).render
+    puts Jabs::Engine.new(src).render
     puts src
     puts target
     raise e
@@ -285,7 +285,12 @@ else
      end
  
      it "compiles else unless branches" do
-       assert_jabs "else unless 3 == 4", "else if(!(3 == 4)) {}"
+       assert_jabs %{
+if true
+  yay
+else unless 3 == 4
+  yay
+       }, "if(true) { yay } else if(!(3 == 4)) { yay }"
      end
   end
 

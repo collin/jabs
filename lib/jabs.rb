@@ -52,6 +52,17 @@ end
 module Jabs
   include Johnson::Nodes
   
+  def self.logger
+    @logger ||= begin
+      #TODO configurable logging
+      logger       = Logger.new STDOUT
+      logger.level = Logger::DEBUG
+      logger.progname = "jabs"
+      logger.info "Started Logging"
+      logger
+    end
+  end
+  
   class Precompiler < Fold::Precompiler
     class << self
       attr_accessor :spot_replacements
@@ -156,24 +167,30 @@ module Jabs
       end
     end
 
-    spot_replace :AccessUpUp do |expression, precompiler|
-      expression.gsub /\/\.\./ do
-        ".prevObject" 
-      end
-    end
-    
-    spot_replace :AccessUp do |expression, precompiler|
-      expression.gsub /\.\./ do
-        "$this.prevObject" 
-      end
-    end
-
     spot_replace :DotAccessor do |expression, precompiler|
       expression.gsub /(^\.([\w]+)|- \.(.+))(.*)/ do |match|
         "$this#{Precompiler.compile_arguments expression, $1, match, $4}"
       end
     end
+
+    spot_replace :AccessUpAndCall do |expression, precompiler|
+      expression.gsub /\.\.(\..*)/ do |match|
+        "$this.prevObject#{Precompiler.do_spot_replace($1)}"
+      end
+    end
+
+    spot_replace :AccessUpUp do |expression, precompiler|
+      expression.
+        gsub(/ \.\.\/|^\.\.\//, "$this.prevObject/").
+        gsub(/\/\.\./, ".prevObject")
+    end    
     
+    spot_replace :AccessUp do |expression, precompiler|
+      expression.gsub /\.\./ do
+        "$this.prevObject"
+      end
+    end
+
     spot_replace :AttributeSetter do |expression, precompiler|
       expression.gsub /@([\w]+)[ ]*=[ ]*(.*)/ do |match|
         if $2[0] == ?=
