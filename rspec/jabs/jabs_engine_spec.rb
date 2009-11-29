@@ -317,6 +317,10 @@ else
     it "allows method calls" do
       assert_jabs "...hide()", "$this.prevObject.hide()"
     end
+    
+    it "doesn't preclude auto-calling methods" do
+      assert_jabs "...hide :slow", "$this.prevObject.hide('slow')"
+    end
 
     it "works within conditionals" do
       assert_jabs "if ...is('.awesome')", "if($this.prevObject.is('.awesome')) {}"

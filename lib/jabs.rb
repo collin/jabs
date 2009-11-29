@@ -156,6 +156,18 @@ module Jabs
       end
     end
 
+    spot_replace :AccessUpUp do |expression, precompiler|
+      expression.gsub /\/\.\./ do
+        ".prevObject" 
+      end
+    end
+    
+    spot_replace :AccessUp do |expression, precompiler|
+      expression.gsub /\.\./ do
+        "$this.prevObject" 
+      end
+    end
+
     spot_replace :DotAccessor do |expression, precompiler|
       expression.gsub /(^\.([\w]+)|- \.(.+))(.*)/ do |match|
         "$this#{Precompiler.compile_arguments expression, $1, match, $4}"
@@ -178,18 +190,6 @@ module Jabs
       end
     end
 
-    spot_replace :AccessUpUp do |expression, precompiler|
-      expression.gsub /\/\.\./ do
-        ".prevObject" 
-      end
-    end
-    
-    spot_replace :AccessUp do |expression, precompiler|
-      expression.gsub /\.\./ do
-        "$this.prevObject" 
-      end
-    end
-
     spot_replace :DanglingThis do |expression, precompiler|
       expression.gsub /prevObject\$this/ do
         "prevObject"
@@ -206,7 +206,6 @@ module Jabs
     def self.compile_arguments expression, call, real, args
       return real if expression[Regexp.new("^\\#{call}\\(")]
       arguments = []
-      puts args[/^\./]
       if args[/^\./]
         "#{call}()#{do_spot_replace(args).gsub("$this", "")}"
       else
