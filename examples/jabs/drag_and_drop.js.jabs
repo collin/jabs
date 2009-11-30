@@ -9,14 +9,13 @@ def sortable parent_selector
         .clone
           .css
             position: 'absolute'
-            top: 5
           .appendTo document.body
 
   :drag
     event.dragProxy
       .css
-        top: event.offsetY
-        left: event.offsetX
+        top: event.pageY
+        left: event.pageX
 
   :dragend
     event.dragProxy 
