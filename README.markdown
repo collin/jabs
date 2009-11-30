@@ -40,9 +40,10 @@ Or this?
           @value = ""
       .blur
 
-Video
+Videos
 =====
 [Watch the quick code-demo video.](http://www.youtube.com/watch?v=JdnXJ6bj_qs)
+[Watch the drag'n'drop code-demo video.](http://www.youtube.com/watch?v=H6dwvsTDMfY)
 
 Install
 =======

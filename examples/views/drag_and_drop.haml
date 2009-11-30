@@ -1,16 +1,86 @@
-%script{:src=> "/jabs/drag_and_drop.js.jabs"}
+%script(src="/jabs/drag_and_drop.js.jabs")
 %style
   :sass
-    ol, li
-      list-style: number
-    li
-      height: 20px
-      width: 300px
-      margin-bottom: 4px
-      background: black
-      color: white
-%ol#sortable
-  %li One: Lorem ipsum dolor sit amet
-  %li Two: Lorem ipsum dolor sit amet.
-  %li Three: Lorem ipsum dolor sit amet.
-  %li Four: Lorem ipsum dolor sit amet.
+    body
+      font: 12px/16px Verdana, Arial, Helvetica, sans-serif
+      color: #002
+      padding: 0
+      margin: 20px
+
+    code
+      display: block
+      background: #F9F9F9
+      border: 1px dashed #ABC
+      font: 12px/16px "Courier New", Courier, monospace
+      padding: 10px
+      margin: 0 0 30px 0
+      white-space: pre
+      float: left
+
+    p
+      margin: 0 0 5px 0
+
+    .box
+      padding: 10px 20px
+      background: #CCC
+      border: 1px solid #AAA
+      text-align: center
+      font-size: 10px
+      margin: 0 0 10px 0
+
+    .drag
+      height: 100px
+      width: 100px
+      float: left
+      border: 1px solid #AAA
+      background: #CCC
+      margin: 10px
+      cursor: move
+      font-size: 80px
+      text-align: center
+      line-height: 100px
+      color: #AAA
+
+    .drop
+      height: 202px
+      width: 202px
+      float: left
+      border: 1px solid #AAA
+      background: #CCC
+      margin: 10px
+      padding: 10px
+      overflow: auto
+
+      .drag
+        height: 77px
+        width: 77px
+        font-size: 70px
+        line-height: 77px
+
+    .dragging
+      position: absolute
+      filter: alpha(opacity=50)
+      -moz-opacity: 0.5
+      opacity: 0.5
+      background-color: #CCF
+      border-color: #AAD
+      color: #AAD
+
+    .outline
+      background-color: #FCC
+      border-color: #DAA
+      border-style: dashed
+      color: #DAA
+
+    .droptarget
+      background-color: #CFC
+      border-color: #ADA
+
+- %w{A B}.each do |letter|
+  .drop(title="Target #{letter}")
+    %b #{letter}
+
+%br(clear='both')
+#nodrop
+  -4.times do |i|
+    .drag(title="Div #{i}") #{i}
