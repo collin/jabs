@@ -48,6 +48,7 @@
 
   JavaScript
   ==========
+  
   It can be scary to leave the world of JavaScript for the madness that is Jabs. But fear not.
   For Jabs treats JavaScript like the good friend it is. When Jabs encounters a line it doesn't understand
   it treats it as JavaScript and doesn't make any modifications. This lets us do things like this
@@ -62,6 +63,7 @@
 
   Selectors
   =========
+  
   Jabs pays special attention to lines that begin with a dollar sign. These are the selectors.
   
     $ .plan > img
@@ -80,7 +82,8 @@
       
   
   Implied Self & Automatic Method Calling
-  ============
+  =======================================
+  
   In normal Javascript whenever you want to do something in the current context you have to go fishing for the 'this' object.
   
     this.doSomething()
@@ -97,6 +100,7 @@
   
   Events
   ======
+  
   Jabs pays attention to lines beginning with ':'. These lines specify event handlers. Jabs has one special event, ':ready'.
   This is like the jQuery onReady shortcut.
   
@@ -118,6 +122,7 @@
 
   Attributes
   ==========
+  
   Who wants to go around looking up attributes on DOM nodes like this?
   
     $(this).attr('some_attr', "some value")
@@ -136,7 +141,8 @@
   current context.
 
   Path Accessors
-  =============
+  ==============
+  
   jQuery has a little used property, "prevObject". It allows you to do this:
   
     el = $('#element')
@@ -158,6 +164,7 @@
 
   Automatic jQuery Wrapper
   ========================
+  
   Jabs provides an automatic jQuery wrapper where it makes sense.
   Take the example of an event handler.
   
@@ -172,6 +179,7 @@
 
   Conditionals
   ============
+  
   Jabs introduces Ruby style conditionals. They are a joy to use.
   
     if 3 === 4
@@ -196,6 +204,7 @@
 
   Functions
   =========
+  
   Jabs lets you define functions. Functions are scoped by the level of indentation.
   
     fun my_function foo, bar
@@ -206,6 +215,7 @@
 
   Methods
   =======
+  
   Jabs wants you to define methods for DOM node contexts.
   
     // This method only allows certain characters to be typed into an input
@@ -221,6 +231,7 @@
 
   Drag & Drop
   ===========
+  
   Jabs ships with a library for simple drag and drop programming.
   Here's a simple example of it in action.
   
@@ -247,6 +258,7 @@
   
   Rack Middleware
   ===============
+  
   Jabs comes with some special Rack middleware.
   
       # First a subclass of Rack::Static
