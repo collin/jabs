@@ -1,20 +1,50 @@
 Javascript Abstract Behavior Syntax? What's that?
 
-I was working on a project *very* similar to http://github.com/nex3/jabl in the months running up to RubyFringe.
+Last yeer I was working on a project *very* similar to http://github.com/nex3/jabl in the months running up to RubyFringe.
 
 Then I saw Hampton's presenation. Oops.
 
-Well I had all this work and I wanted to see what it'd take to get it producing usable javascript.
+But now over a year has passed and there is no Jabl/Jabs or whatever one would decide to call it. (http://ejohn.org/apps/jquery2/)
 
-I pulled it out of http://github.com/collin/lucky7 and stuck it here.
+So screw it. Now is the time for Jabs.
 
-And hacked around a bit, removing some features, adding others.
+  jQuery(function() {
+    var $ = jQuery;
+  
+    $("[data-default_value]")
+      .blur(function() {
+        var self = $(this);
+        if(self.val() === "") {
+          self.val(self.attr("data-default_value"));
+        }
+      })
+      .focus(function() {
+        var self = $(this);
+        if(self.val === self.attr("data-default_value")) {
+          self.val("");
+        }
+      })
+      .blur(); 
+  });
 
-Check it out:
+Would you rather code that
+--------------------------
 
-(add github to rubygems)
-gem install collin-fold
-git://github.com/collin/jabs.git
-cd jabs
+Or this?
+========
 
-Look through /examples
+  $ [data-default_value]
+    :blur
+      if @value === ""
+        @value = @data-default_value
+    :focus
+      if @value === @data-default_value
+        @value = ""
+    .blur
+
+Javascript
+==========
+Jabs is a
+
+Selectors
+=========
