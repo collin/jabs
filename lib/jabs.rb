@@ -1,8 +1,8 @@
-#! /usr/bin/env ruby
-
-require 'rubygems'
 require 'fold'
+require 'rack'
 require 'johnson'
+require 'pathname'
+puts require Pathname.new(__FILE__).dirname.expand_path+'jabs/middleware'
 
 module Johnson
   module Nodes

@@ -56,6 +56,8 @@ begin
     gemspec.homepage = "http://github.com/collin/jabs"
     gemspec.authors = ["Collin Miller"]
 
+    gemspec.executables << 'jabs'
+
     gemspec.add_dependency('fold', '0.5.0')
     gemspec.add_dependency('johnson', '1.1.2')
     gemspec.add_dependency('colored', '1.1')
