@@ -4,7 +4,6 @@ require 'sinatra'
 require 'haml'
 require 'sass'
 
-
 class Example < Sinatra::Base
   set :views, Jabs.root+'../examples/views'
 

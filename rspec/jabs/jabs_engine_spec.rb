@@ -120,7 +120,7 @@ def sets_default_value
 }, %{
 jQuery.fn.sets_default_value = function() {
   var $this = this;
-  (function($this) {})($this.find('[default_value]'))
+  return (function($this) {return $this})($this.find('[default_value]'))
 }
 }
     end
@@ -132,11 +132,11 @@ jQuery.fn.sets_default_value = function() {
     end
 
     it "makes a query" do
-      assert_jabs "$#{@css}", "(function($this) {})(jQuery('#{@css}'));"
+      assert_jabs "$#{@css}", "return (function($this) { return $this})(jQuery('#{@css}'));"
     end
 
     it "renders iterator" do
-      assert_jabs "$#{@css}\n  this.rules();", "(function($this) {this.rules();})(jQuery('#{@css}'));"
+      assert_jabs "$#{@css}\n  this.rules();", "return (function($this) {this.rules(); return $this})(jQuery('#{@css}'));"
     end
 
 #     it "wraps with document.ready if not already wrapped" do
@@ -146,7 +146,7 @@ jQuery.fn.sets_default_value = function() {
 
   describe "events" do
     it "has a special :ready event" do
-      assert_jabs(":ready", "jQuery(function() {\n  (function($this) {  })(jQuery(window));\n});")
+      assert_jabs(":ready", "jQuery(function() {\n  return (function($this) {  return $this})(jQuery(window));\n});")
     end
 
     it "has it's own $this" do
@@ -156,11 +156,12 @@ $element
     .hide
 }, 
 %{
-(function($this) {
+return (function($this) {
   $this.live("click", function(event) {
     var $this = jQuery(this);
     $this.hide();
   });
+  return $this
 })(jQuery("element"))
 }
     end
@@ -173,7 +174,7 @@ $element
       assert_jabs ":click.awesomely\n  a()\n  b()", "$this.live(\"click.awesomely\", function(event){var $this = jQuery(this);a();b();});"
     end
 
-    it "compiles nested with anything with arbitraty javascript inbetween" do
+    it "compiles nested with anything with arbitrary javascript in between" do
       assert_jabs %{
 fun test
   var cat = yum
@@ -193,12 +194,13 @@ $document
   :click
     var cool = "beans"
 },%{
-(function($this) {
+return (function($this) {
   cars++;
   $this.live('click', function(event) {
     var $this = jQuery(this);
     var cool = "beans"
   });
+  return $this
 })(jQuery("document"));
 }
     end
@@ -221,11 +223,11 @@ $this.live('click', function(event) {
   describe "sub selections" do
     before(:each) {@css= "#some.convoluted:selector"}
     it "queries against this" do
-      assert_jabs "&#{@css}", "(function($this) {})($this.find(\"#{@css}\"));"
+      assert_jabs "&#{@css}", "return (function($this) {return $this})($this.find(\"#{@css}\"));"
     end
 
     it "renders iterator" do
-      assert_jabs "&#{@css}\n  a()\n  b()", "(function($this) {a();b();})($this.find(\"#{@css}\"));"
+      assert_jabs "&#{@css}\n  a()\n  b()", "return (function($this) {a();b(); return $this})($this.find(\"#{@css}\"));"
     end
   end
 
@@ -364,17 +366,19 @@ def sortable parent_selector
       .css
         position: 'absolute'
         top: 5
-      },
+},
       %{
 jQuery.fn.sortable = function(parent_selector) {
   var $this = this;
-  (function($this){
-    (function($this){
+  return (function($this){
+    return (function($this){
       $this.css({
         'position': 'absolute',
         'top': 5
-      })  
+      })
+      return $this
     })($this.clone())
+    return $this
   })(jQuery('#selector'))  
 }
       }
@@ -390,10 +394,12 @@ jQuery.fn.sortable = function(parent_selector) {
       },
       %{
 jQuery(function() {
-  (function($this) {
-    (function($this) {
+  return (function($this) {
+    return (function($this) {
       $this.call("awesomely");
+      return $this
 })(jQuery(object.targetElement));
+return $this
 })(jQuery(window));
 });
       }
@@ -404,8 +410,9 @@ jQuery(function() {
   .methodB :name
       },
       %{
-(function($this){
+return (function($this){
   $this.methodB('name')
+  return $this
 })($this.methodA('val'))
       }
     end

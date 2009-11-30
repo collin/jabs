@@ -1,1 +1,16 @@
 %script{:src=> "/jabs/drag_and_drop.js.jabs"}
+%style
+  :sass
+    ol, li
+      list-style: number
+    li
+      height: 20px
+      width: 300px
+      margin-bottom: 4px
+      background: black
+      color: white
+%ol#sortable
+  %li One: Lorem ipsum dolor sit amet
+  %li Two: Lorem ipsum dolor sit amet.
+  %li Three: Lorem ipsum dolor sit amet.
+  %li Four: Lorem ipsum dolor sit amet.

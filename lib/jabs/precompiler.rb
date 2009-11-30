@@ -1,4 +1,6 @@
 module Jabs
+  NeverLive = %w{dragstart drag dragend dropstart drop dropend}
+  
   class Precompiler < Fold::Precompiler
     class << self
       attr_accessor :spot_replacements
@@ -44,7 +46,7 @@ module Jabs
     end
 
     folds :Ready, /^:ready/ do
-      jquery(function(nil,  [], [:source_elements, [call(function(nil, ["$this"], [:source_elements, render_children]), jquery([:name, "window"]))]]))
+      jquery([:function, nil,  [], [:source_elements, [call(function(nil, ["$this"], [:source_elements, render_children]), jquery([:name, "window"]))]]])
     end
 
     folds :Function, /^fun / do
@@ -199,7 +201,8 @@ RUBY
     end
 
     def event_bind event, binds_to, function_sexp=nil
-      call(access(binds_to, [:name, "live"]), [:string, event], function(nil,  ["event"], function_sexp))
+      binding = NeverLive.include?(event.to_s)? 'bind' : 'live'
+      call(access(binds_to, [:name, binding]), [:string, event], [:function, nil,  ["event"], function_sexp])
     end
 
     def call *args
@@ -215,8 +218,9 @@ RUBY
     end
 
     def function name=nil, args=[], function_sexp=nil
-      [:function, name, args, function_sexp]
-    end
+      function_sexp.last << [:return, parse("$this")]
+      [:return, [:function, name, args, function_sexp]]
+    end    
 
     def jquery *jquery_arg
       [:function_call, [

@@ -1,7 +1,11 @@
+:ready
+  $#sortable
+    .sortable 'li'
+
 def sortable parent_selector
   :dragstart
     event.target
-      .parents parent_selector
+      .closest parent_selector
         .clone
           .css
             position: 'absolute'
@@ -15,19 +19,6 @@ def sortable parent_selector
         left: event.offsetX
 
   :dragend
-    event.dragproxy 
+    event.dragProxy 
       .remove
 
-  :dropstart
-    event.dropTarget
-      .addClass 'droptarget'
-
-  :drop
-    event.dropTarget
-      .before
-        event.dragTarget
-          .parents parent_selector
-
-  :dropend
-    event.dropTarget
-      .removeClass 'droptarget'
