@@ -61,9 +61,10 @@ module Jabs
         [:function, nil, arg_names, [:source_elements, [parse("var $this = this")] + render_children]]]
     end
 
-    if_meta = %q{
-      index = parent.children.index(self)
-      _next =  parent.children.slice index + 1
+    if_meta = <<RUBY
+      index = parent.children.index(self) || 0
+
+      _next =  parent.children.slice! index + 1
       
       _else = if [Else, ElseIf].include? _next.class
         _next.render
@@ -71,7 +72,7 @@ module Jabs
         nil
       end
       [:if, parse(Precompiler.do_spot_replace(text)),[:source_elements, render_children], _else]
-    }
+RUBY
 
     folds :If, /^if / do
       eval if_meta
@@ -92,7 +93,6 @@ module Jabs
     folds :DotAccessor, /^\./ do
       if children.find_all{|child| child.text[/^[\w\d]*?:/]}.any? and not(text[/\{/])
         break if text[/\{|\}/]
-        puts text
         self.text << "(" << johnsonize([:object_literal, children.map do |child| 
           key, value = *child.text.split(":")
           [:property, [:string, key], parse(value)]
