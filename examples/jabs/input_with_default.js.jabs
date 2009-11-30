@@ -3,7 +3,7 @@
     :blur
       if @value === ''
         @value = @default_value
-
+    
     :focus
       if @value === @default_value
         @value = ''
