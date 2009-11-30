@@ -3,8 +3,9 @@ def sortable parent_selector
     event.target
       .parents parent_selector
         .clone
-          .css 
+          .css
             position: 'absolute'
+            top: 5
           .appendTo document.body
 
   :drag

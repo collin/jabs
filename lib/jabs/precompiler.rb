@@ -92,6 +92,7 @@ module Jabs
     folds :DotAccessor, /^\./ do
       if children.find_all{|child| child.text[/^[\w\d]*?:/]}.any? and not(text[/\{/])
         break if text[/\{|\}/]
+        puts text
         self.text << "(" << johnsonize([:object_literal, children.map do |child| 
           key, value = *child.text.split(":")
           [:property, [:string, key], parse(value)]

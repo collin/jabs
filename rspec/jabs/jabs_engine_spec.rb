@@ -4,6 +4,7 @@ require 'colored'
 
 describe Jabs::Engine do
   def assert_jabs src, target
+    target = "(function(){#{target}})()"
     jabsed = Jabs::Engine.new(src).render
     src = Johnson::Parser.parse(jabsed).to_ecma
     target = Johnson::Parser.parse(target).to_ecma
@@ -149,7 +150,19 @@ jQuery.fn.sets_default_value = function() {
     end
 
     it "has it's own $this" do
-      assert_jabs ":click", "var $this = jQuery(this);"
+      assert_jabs %{
+$element
+  :click
+    .hide
+}, 
+%{
+(function($this) {
+  $this.live("click", function(event) {
+    var $this = jQuery(this);
+    $this.hide();
+  });
+})(jQuery("element"))
+}
     end
 
     it "binds events to 'this' and preserves namespace" do
@@ -345,15 +358,25 @@ else unless 3 == 4
   describe "hash literals" do
     it "works for method calls" do
       assert_jabs %{
-.css
-  position: 'absolute'
-  top: 5
+def sortable parent_selector
+  $#selector
+    .clone
+      .css
+        position: 'absolute'
+        top: 5
       },
       %{
-$this.css({
-  'position': 'absolute',
-  'top': 5
-})
+jQuery.fn.sortable = function(parent_selector) {
+  var $this = this;
+  (function($this){
+    (function($this){
+      $this.css({
+        'position': 'absolute',
+        'top': 5
+      })  
+    })($this.clone())
+  })(jQuery('#selector'))  
+}
       }
     end
   end
