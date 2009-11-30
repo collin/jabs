@@ -1,0 +1,4 @@
+ruby -e "\
+require 'rubygems'; require 'jabs'
+puts Jabs::Engine.new(STDIN.read).render
+"

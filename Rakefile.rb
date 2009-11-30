@@ -59,6 +59,7 @@ begin
     gemspec.add_dependency('fold', '0.5.0')
     gemspec.add_dependency('johnson', '1.1.2')
     gemspec.add_dependency('colored', '1.1')
+    gemspec.add_dependency('rack', '1.0.1')
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
