@@ -8,7 +8,7 @@ require 'sass'
 class Example < Sinatra::Base
   set :views, Jabs.root+'../examples/views'
 
-  %w{input_with_default editor drag_and_drop}.each do |part|
+  %w{input_with_default drag_and_drop}.each do |part|
     get "/#{part}" do
       haml part.intern
     end

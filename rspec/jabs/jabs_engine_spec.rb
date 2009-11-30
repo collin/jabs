@@ -153,11 +153,11 @@ jQuery.fn.sets_default_value = function() {
     end
 
     it "binds events to 'this' and preserves namespace" do
-      assert_jabs ":click.awesomely", "$this.live(\"click.awesomely\", function(e){var $this = jQuery(this);});"
+      assert_jabs ":click.awesomely", "$this.live(\"click.awesomely\", function(event){var $this = jQuery(this);});"
     end
 
     it "renders callback" do
-      assert_jabs ":click.awesomely\n  a()\n  b()", "$this.live(\"click.awesomely\", function(e){var $this = jQuery(this);a();b();});"
+      assert_jabs ":click.awesomely\n  a()\n  b()", "$this.live(\"click.awesomely\", function(event){var $this = jQuery(this);a();b();});"
     end
 
     it "compiles nested with anything with arbitraty javascript inbetween" do
@@ -168,7 +168,7 @@ fun test
 },%{ 
 function test() {
   var cat = yum;
-  $this.live( 'click', function(e) {var $this = jQuery(this);});
+  $this.live( 'click', function(event) {var $this = jQuery(this);});
 }
 }
     end
@@ -182,7 +182,7 @@ $document
 },%{
 (function($this) {
   cars++;
-  $this.live('click', function(e) {
+  $this.live('click', function(event) {
     var $this = jQuery(this);
     var cool = "beans"
   });
@@ -197,7 +197,7 @@ var cat = poo
   slot++
 }, %{
 var cat = poo;
-$this.live('click', function(e) {
+$this.live('click', function(event) {
   var $this = jQuery(this);
   slot++;
 });
@@ -342,8 +342,40 @@ else unless 3 == 4
     end  
   end
 
+  describe "hash literals" do
+    it "works for method calls" do
+      assert_jabs %{
+.css
+  position: 'absolute'
+  top: 5
+      },
+      %{
+$this.css({
+  'position': 'absolute',
+  'top': 5
+})
+      }
+    end
+  end
+
   describe "nested function calls" do
-    it "assumes previous line returns jquery object" do
+    it "assumes previous line returns jquery object without implied self" do
+      assert_jabs %{
+:ready
+  object.targetElement
+    .call 'awesomely'
+      },
+      %{
+jQuery(function() {
+  (function($this) {
+    (function($this) {
+      $this.call("awesomely");
+})(jQuery(object.targetElement));
+})(jQuery(window));
+});
+      }
+    end
+    it "assumes previous line returns jquery object for implied self" do
       assert_jabs %{
 .methodA :val
   .methodB :name

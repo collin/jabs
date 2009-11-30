@@ -1,0 +1,32 @@
+def sortable parent_selector
+  :dragstart
+    event.target
+      .parents parent_selector
+        .clone
+          .css 
+            position: 'absolute'
+          .appendTo document.body
+
+  :drag
+    event.dragProxy
+      .css
+        top: event.offsetY
+        left: event.offsetX
+
+  :dragend
+    event.dragproxy 
+      .remove
+
+  :dropstart
+    event.dropTarget
+      .addClass 'droptarget'
+
+  :drop
+    event.dropTarget
+      .before
+        event.dragTarget
+          .parents parent_selector
+
+  :dropend
+    event.dropTarget
+      .removeClass 'droptarget'

@@ -21,7 +21,11 @@ module Jabs
     end
 
     folds :Line, // do
-      [:fall_through, (Precompiler.do_spot_replace(text, self) + children.map{|child| child.text}.join(""))]
+      if children.reject{|child| child.is_a?(Line) }.any?
+        call(function(nil, ["$this"], [:source_elements, render_children]), jquery(Johnson::Parser.parse(text).value.first))
+      else
+        [:fall_through, (Precompiler.do_spot_replace(text, self) + children.map{|child| child.text}.join(""))]
+      end
     end
 
     folds :Selector, /^\$/ do
@@ -86,9 +90,19 @@ module Jabs
     end
 
     folds :DotAccessor, /^\./ do
+      if children.find_all{|child| child.text[/^[\w\d]*?:/]}.any? and not(text[/\{/])
+        break if text[/\{|\}/]
+        self.text << "(" << johnsonize([:object_literal, children.map do |child| 
+          key, value = *child.text.split(":")
+          [:property, [:string, key], parse(value)]
+        end]).to_ecma.gsub(",\n", ",") << ")"
+        self.children = []
+      end
+
       index = parent.children.index(self)
       _next =  parent.children.slice index + 1
       _text = _next ? _next.text : ""
+
       if children.any?
         if (_text[/\}\)/])
           [:fall_through, ("$this."+Precompiler.do_spot_replace(text, self) + children.map{|child| child.text}.join(""))]
@@ -184,7 +198,7 @@ module Jabs
     end
 
     def event_bind event, binds_to, function_sexp=nil
-      call(access(binds_to, [:name, "live"]), [:string, event], function(nil,  ["e"], function_sexp))
+      call(access(binds_to, [:name, "live"]), [:string, event], function(nil,  ["event"], function_sexp))
     end
 
     def call *args
