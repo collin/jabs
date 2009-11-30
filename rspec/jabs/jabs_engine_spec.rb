@@ -358,17 +358,18 @@ else unless 3 == 4
 
   describe "ajax" do
     describe "get" do
-      it "makes a basic ajax call" do
-        assert_jabs "get", "jQuery.ajax()"
-      end
+      it "makes a basic ajax call" # do
+      #   assert_jabs "get", "jQuery.ajax()"
+      # end
       
-      it "uses a url passed to it" do
-        assert_jabs 'get "http://google.com"', '
-          jQuery.ajax({
-            url: "http://google.com"
-          })
-        '
-      end
+      
+      it "uses a url passed to it" # do
+      #         assert_jabs 'get "http://google.com"', '
+      #           jQuery.ajax({
+      #             url: "http://google.com"
+      #           })
+      #         '
+      #       end
     end
     
     describe "post" do
