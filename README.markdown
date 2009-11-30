@@ -44,6 +44,8 @@
 
   Let's kick things off and look at all of Jabs' fun-filled features.
 
+    gem install jabs
+
   JavaScript
   ==========
   It can be scary to leave the world of JavaScript for the madness that is Jabs. But fear not.
