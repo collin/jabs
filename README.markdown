@@ -9,7 +9,6 @@
   So screw it. Now is the time for Jabs.
 
   Would you rather code this?
-  ---------------------------
 
         jQuery(function() {
           var $ = jQuery;
@@ -31,7 +30,6 @@
         });
 
   Or this?
-  --------
 
         $ [data-default_value]
           :blur
