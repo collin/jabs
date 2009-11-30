@@ -40,6 +40,10 @@ Or this?
           @value = ""
       .blur
 
+Video
+=====
+[Watch the quick code-demo video.](http://www.youtube.com/watch?v=JdnXJ6bj_qs)
+
 Let's kick things off and look at all of Jabs' fun-filled features.
 
 gem install jabs
