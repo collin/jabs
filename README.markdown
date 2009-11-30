@@ -8,6 +8,9 @@ But now over a year has passed and there is no Jabl/Jabs or whatever one would d
 
 So screw it. Now is the time for Jabs.
 
+Would you rather code this?
+---------------------------
+
   jQuery(function() {
     var $ = jQuery;
   
@@ -27,11 +30,8 @@ So screw it. Now is the time for Jabs.
       .blur(); 
   });
 
-Would you rather code that
---------------------------
-
 Or this?
-========
+--------
 
   $ [data-default_value]
     :blur
@@ -44,7 +44,18 @@ Or this?
 
 Javascript
 ==========
-Jabs is a
 
 Selectors
 =========
+
+Events
+======
+
+Attributes
+==========
+
+Live
+====
+
+Drag & Drop
+===========
