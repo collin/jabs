@@ -96,6 +96,15 @@ Arguments may also by supplied with or without parenthesis.
     $#element
       .fadeOut 'slow'
 
+Hash Literal Syntax
+===================
+Some methods, like .css take a hash. To make life easier with these methods a lean hash literal has been provided.
+
+    $#element
+        .css
+            background: #fcc
+            z-index: 2000
+
 Events
 ======
 
