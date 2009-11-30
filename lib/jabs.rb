@@ -4,6 +4,7 @@ require 'johnson'
 require 'pathname'
 
 module Jabs
+  
   def self.root
     @root ||= Pathname.new(__FILE__).dirname.expand_path
   end
@@ -14,7 +15,7 @@ module Jabs
   
   require root+'johnson/ext'
   include Johnson::Nodes
-
+  
   def self.logger
     @logger ||= begin
       #TODO configurable logging

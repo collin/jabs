@@ -1,8 +1,11 @@
-require 'lib/jabs'
 require 'pathname'
 require 'sinatra'
 require 'haml'
 require 'sass'
+
+root = Pathname.new(__FILE__).dirname.expand_path + '..'
+require root+'lib/jabs'
+require root+'examples/haml_filter'
 
 class Example < Sinatra::Base
   set :views, Jabs.root+'../examples/views'
