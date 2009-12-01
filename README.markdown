@@ -13,16 +13,16 @@ Would you rather code this?
     jQuery(function() {
       var $ = jQuery;
 
-      $("[data-default_value]")
+      $("[default_value]")
         .blur(function() {
           var self = $(this);
           if(self.val() === "") {
-            self.val(self.attr("data-default_value"));
+            self.val(self.attr("default_value"));
           }
         })
         .focus(function() {
           var self = $(this);
-          if(self.val === self.attr("data-default_value")) {
+          if(self.val === self.attr("default_value")) {
             self.val("");
           }
         })
@@ -31,7 +31,7 @@ Would you rather code this?
 
 Or this?
 
-    $ [data-default_value]
+    $ [default_value]
       :blur
         if @value === ""
           @value = @default_value
