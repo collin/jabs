@@ -50,7 +50,14 @@ Install
 
 Let's kick things off and look at all of Jabs' fun-filled features.
 
-gem install jabs
+gem install jabs -v 0.2.0
+
+Executable
+==========
+
+Jabs comes with an executable, jabs. Jabs code IN, Javascript OUT. As god intended.
+
+    jabs < somefile.jabs > somefile.js
 
 JavaScript
 ==========
