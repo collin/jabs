@@ -1,4 +1,0 @@
-#!/usr/bin/env ruby -KU
-
-require 'jabs'
-puts Jabs::Engine.new(STDIN.read).render
