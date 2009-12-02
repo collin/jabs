@@ -16,9 +16,10 @@ body {
   top: -200pt;
   left: -80pt;
   -moz-transform: rotate(-5deg);
+  -webkit-transform: rotate(-5deg);
   color: #00ebf4;
   font-weight: bold;
-  font-family: Helvetica;
+  font-family: Helvetica, sans-serif;
   font-size: 300pt; }
 
 #content {
@@ -27,7 +28,7 @@ body {
 #license {
   margin: 0;
   padding: 0;
-  font-family: Helvetica;
+  font-family: Helvetica, sans-serif;
   font-size: 7.5pt;
   color: #999; }
 
@@ -36,6 +37,12 @@ body {
   width: 800px;
   padding-bottom: 4em; }
 
+#videos {
+  float: left; }
+
+#quotes {
+  max-width: 550px;
+  float: right; }
 
 blockquote {
   float: right;
@@ -46,21 +53,25 @@ blockquote {
     padding-left: 3em;
     padding-right: 3em; }
   blockquote cite {
-    width: 20%;
     float: right;
-    font-family: Verdana !important;
+    font-family: Verdana, sans-serif !important;
     font-style: normal;
     font-weight: bold; }
     blockquote cite a {
       text-decoration: none;
-      font-size: 14pt; }
+      font-size: 14pt;
+      float: right;
+      text-align: right;
+      padding-left: 1em; }
     blockquote cite span {
       font-size: 10pt;
-      display: block; }
+      text-align: right;
+      display: inline-block;
+      width: 310px; }
   blockquote p {
-    float: right;
     text-align: right;
-    font-family: Georgia;
+    background: #f0f0f0;
+    font-family: serif;
     font-size: 18pt;
-    font-weight: bold;
+    font--weight: bold;
     color: #00ebf4; }
