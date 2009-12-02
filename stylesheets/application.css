@@ -51,7 +51,8 @@ blockquote {
   blockquote img {
     float: right;
     padding-left: 3em;
-    padding-right: 3em; }
+    padding-right: 3em;
+    border: none; }
   blockquote cite {
     float: right;
     font-family: Verdana, sans-serif !important;
