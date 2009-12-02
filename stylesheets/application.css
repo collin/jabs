@@ -1,3 +1,66 @@
 body {
   font-family: Verdana;
   font-size: 10pt; }
+  body h1 {
+    text-transform: uppercase;
+    font-size: 21pt;
+    margin-bottom: 0;
+    padding-bottom: 0; }
+    body h1 em {
+      font-style: normal;
+      font-size: 26pt;
+      color: #FF0000 !important; }
+
+#banner {
+  position: absolute;
+  top: -200pt;
+  left: -80pt;
+  -moz-transform: rotate(-5deg);
+  color: #00ebf4;
+  font-weight: bold;
+  font-family: Helvetica;
+  font-size: 300pt; }
+
+#content {
+  margin: 8em; }
+
+#license {
+  margin: 0;
+  padding: 0;
+  font-family: Helvetica;
+  font-size: 7.5pt;
+  color: #999; }
+
+#header {
+  text-align: right;
+  width: 800px;
+  padding-bottom: 4em; }
+
+
+blockquote {
+  float: right;
+  width: 100%;
+  clear: both; }
+  blockquote img {
+    float: right;
+    padding-left: 3em;
+    padding-right: 3em; }
+  blockquote cite {
+    width: 20%;
+    float: right;
+    font-family: Verdana !important;
+    font-style: normal;
+    font-weight: bold; }
+    blockquote cite a {
+      text-decoration: none;
+      font-size: 14pt; }
+    blockquote cite span {
+      font-size: 10pt;
+      display: block; }
+  blockquote p {
+    float: right;
+    text-align: right;
+    font-family: Georgia;
+    font-size: 18pt;
+    font-weight: bold;
+    color: #00ebf4; }
