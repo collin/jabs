@@ -1,3 +1,8 @@
+@import url(compass/reset.css);
+body, html {
+  margin: 0;
+  padding: 0; }
+
 body {
   font-family: Verdana;
   font-size: 10pt; }
@@ -11,13 +16,16 @@ body {
       font-size: 26pt;
       color: #FF0000 !important; }
 
+#project_link {
+  clear: both; }
+
 #banner {
-  position: fixed;
+  position: absolute;
   top: -200px;
   left: -80px;
   z-index: -20000;
   -moz-transform: rotate(-5deg);
-  -webkit-transform: rotate(-5deg);
+  -webkit-transform: rotate(-5deg) translateY(-60px);
   color: #00ebf4;
   font-weight: bold;
   font-family: Helvetica, sans-serif;
