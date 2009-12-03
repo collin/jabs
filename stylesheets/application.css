@@ -12,9 +12,10 @@ body {
       color: #FF0000 !important; }
 
 #banner {
-  position: absolute;
-  top: -200pt;
-  left: -80pt;
+  position: fixed;
+  top: -200px;
+  left: -80px;
+  z-index: -20000;
   -moz-transform: rotate(-5deg);
   -webkit-transform: rotate(-5deg);
   color: #00ebf4;
@@ -72,6 +73,7 @@ blockquote {
   blockquote p {
     text-align: right;
     background: #f0f0f0;
+    white-space: nowrap;
     font-family: serif;
     font-size: 18pt;
     font--weight: bold;
