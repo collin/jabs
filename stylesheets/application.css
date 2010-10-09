@@ -14,7 +14,7 @@ body {
     body h1 em {
       font-style: normal;
       font-size: 26pt;
-      color: #FF0000 !important; }
+      color: red !important; }
 
 #project_link {
   clear: both; }
@@ -39,7 +39,7 @@ body {
   padding: 0;
   font-family: Helvetica, sans-serif;
   font-size: 7.5pt;
-  color: #999; }
+  color: #999999; }
 
 #header {
   text-align: right;
@@ -51,7 +51,9 @@ body {
 
 #quotes {
   max-width: 550px;
-  float: right; }
+  float: right;
+  position: relative;
+  top: -38px; }
 
 blockquote {
   float: right;
